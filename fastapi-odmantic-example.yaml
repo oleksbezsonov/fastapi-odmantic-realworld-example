@@ -3,51 +3,51 @@ fastapi-odmantic-example:
   defines: runnable
   metadata:
     name: fastapi-odmantic-example
-    description: A FastAPI application using odmantic as an ODM to interact with MongoDB
+    description: A FastAPI based backend application showcasing ODMantic library.
     icon: https://emojiapi.dev/api/v1/robot.svg
   containers:
     fastapi-odmantic-example:
       build: .
   services:
-    http:
+    http-server:
       container: fastapi-odmantic-example
       port: 8000
       host-port: 8000
       publish: false
       protocol: TCP
-      description: Main application port
+      description: HTTP server communicates via this port.
   connections:
-    mongodb:
+    mongo-connection:
       target: mongodb/mongodb
       service: mongodb
   variables:
     pythonpath:
       env: PYTHONPATH
       type: string
-      description: Python search path
+      description: Used to set the path for Python modules.
       value: ./src
     coverage-rcfile:
       env: COVERAGE_RCFILE
       type: string
-      description: Coverage configuration file path
+      description: Path to the file holding coverage configurations.
       value: ./coverage.ini
     secret-key:
       env: SECRET_KEY
       type: string
-      description: Encryption secret key
+      description: Used for maintaining secrecy.
       value: '!!!SETME-USE-SECRETS!!!'
     algorithm:
       env: ALGORITHM
       type: string
-      description: Encryption algorithm
+      description: The algorithm used to encrypt or decrypt string or data.
       value: HS256
     access-token-expire-minutes:
       env: ACCESS_TOKEN_EXPIRE_MINUTES
       type: int
-      description: Access token expiration time in minutes
+      description: Time duration in minutes for access token to expire.
       value: '30'
     mongo-uri:
       env: MONGO_URI
-      type: string
-      description: MongoDB connection URI
-      value: <- connection-hostname("mongodb")
+      type: string_secret
+      description: Connection URI for a MongoDB service.
+      value: <- connection-hostname("mongo-connection")
