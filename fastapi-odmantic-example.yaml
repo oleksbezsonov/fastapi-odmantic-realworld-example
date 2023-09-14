@@ -1,0 +1,53 @@
+namespace: fastapi-odmantic-example
+fastapi-odmantic-example:
+  defines: runnable
+  metadata:
+    name: fastapi-odmantic-example
+    description: A FastAPI application using odmantic as an ODM to interact with MongoDB
+    icon: https://emojiapi.dev/api/v1/robot.svg
+  containers:
+    fastapi-odmantic-example:
+      build: .
+  services:
+    http:
+      container: fastapi-odmantic-example
+      port: 8000
+      host-port: 8000
+      publish: false
+      protocol: TCP
+      description: Main application port
+  connections:
+    mongodb:
+      target: mongodb/mongodb
+      service: mongodb
+  variables:
+    pythonpath:
+      env: PYTHONPATH
+      type: string
+      description: Python search path
+      value: ./src
+    coverage-rcfile:
+      env: COVERAGE_RCFILE
+      type: string
+      description: Coverage configuration file path
+      value: ./coverage.ini
+    secret-key:
+      env: SECRET_KEY
+      type: string
+      description: Encryption secret key
+      value: '!!!SETME-USE-SECRETS!!!'
+    algorithm:
+      env: ALGORITHM
+      type: string
+      description: Encryption algorithm
+      value: HS256
+    access-token-expire-minutes:
+      env: ACCESS_TOKEN_EXPIRE_MINUTES
+      type: int
+      description: Access token expiration time in minutes
+      value: '30'
+    mongo-uri:
+      env: MONGO_URI
+      type: string
+      description: MongoDB connection URI
+      value: <- connection-hostname("mongodb")
