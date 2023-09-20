@@ -1,0 +1,56 @@
+namespace: fastapi-realworld-example
+fastapi-realworld-example:
+  defines: runnable
+  metadata:
+    name: fastapi-realworld-example
+    description: >-
+      A Realworld example application built with FastAPI and ODMantic,
+      demonstrating user registration, login, and operations on articles and
+      comments.
+    icon: https://emojiapi.dev/api/v1/robot.svg
+  containers:
+    fastapi-realworld-example:
+      build: .
+  connections:
+    mongo-db:
+      target: fastapi-realworld-example/mongodb
+      service: mongodb
+  variables:
+    pythonpath:
+      env: PYTHONPATH
+      type: string
+      description: Used to set the Python module search path
+      value: ./src
+    coverage-rcfile:
+      env: COVERAGE_RCFILE
+      type: string
+      description: Coverage report file path
+      value: ./coverage.ini
+    secret-key:
+      env: SECRET_KEY
+      type: string
+      description: Secret encryption key
+      value: '!!!SETME-USE-SECRETS!!!'
+    algorithm:
+      env: ALGORITHM
+      type: string
+      description: Encryption algorithm
+      value: HS256
+    access-token-expire-minutes:
+      env: ACCESS_TOKEN_EXPIRE_MINUTES
+      type: int
+      description: Token expiration time in minutes
+      value: 30
+    mongo-uri:
+      env: MONGO_URI
+      type: string
+      description: Mongodb server uri
+      value: <- connection-hostname("mongo-db")
+mongodb:
+  defines: runnable
+  inherits: mongodb/mongodb
+stack:
+  defines: group
+  runnable-list:
+    - fastapi-realworld-example/fastapi-realworld-example
+    - fastapi-realworld-example/mongodb
