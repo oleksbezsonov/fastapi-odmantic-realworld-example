@@ -4,45 +4,55 @@ fastapi-odmantic-realworld-example:
   metadata:
     name: fastapi-odmantic-realworld-example
     description: >-
-      This is a Python FastAPI application using the Odmantic ODM as the
-      backend.
+      A FastAPI application using ODMantic as an ODM for MongoDB, based on the
+      RealWorld app specification.
     icon: https://emojiapi.dev/api/v1/robot.svg
   containers:
     fastapi-odmantic-realworld-example:
       build: .
   services:
-    uvicorn-port:
+    application:
       container: fastapi-odmantic-realworld-example
       port: 8000
       host-port: 8000
       publish: false
       protocol: TCP
-      description: The port exposed for uvicorn server
+      description: Port that the application runs on.
   connections:
-    mongo-db:
+    mongo-connection:
       target: fastapi-odmantic-realworld-example/mongodb
       service: mongodb
   variables:
+    pythonpath:
+      env: PYTHONPATH
+      type: string
+      description: Path for python modules and packages
+      value: ./src
+    coverage-rcfile:
+      env: COVERAGE_RCFILE
+      type: string
+      description: File for coverage report configuration
+      value: ./coverage.ini
     secret-key:
       env: SECRET_KEY
       type: string
-      description: The secret key used for security
-      value: '!!!SETME-USE-SECRETS!!!'
+      description: Key for encoding/decoding information
+      value: '!!!SETME!!!'
     algorithm:
       env: ALGORITHM
       type: string
-      description: The algorithm used for security
+      description: Algorithm used in encoding/decoding information
       value: HS256
     access-token-expire-minutes:
       env: ACCESS_TOKEN_EXPIRE_MINUTES
       type: int
-      description: The expire time for access token
+      description: Access token expiration time in minutes
       value: 30
     mongo-uri:
       env: MONGO_URI
       type: string
-      description: The URI to the MongoDB instance
-      value: <- connection-hostname("mongo-db")
+      description: The URI of the mongodb service
+      value: <- connection-hostname("mongo-connection")
 mongodb:
   defines: runnable
   inherits: mongodb/mongodb
