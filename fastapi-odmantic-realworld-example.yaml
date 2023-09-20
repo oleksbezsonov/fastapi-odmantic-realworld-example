@@ -1,0 +1,58 @@
+namespace: fastapi-odmantic-realworld-example
+fastapi-odmantic-realworld-example:
+  defines: runnable
+  metadata:
+    name: fastapi-odmantic-realworld-example
+    description: >-
+      A realworld example application written in FastAPI using ODMantic for
+      MongoDB object document mapping.
+    icon: https://emojiapi.dev/api/v1/robot.svg
+  containers:
+    fastapi-odmantic-realworld-example:
+      build: .
+  services:
+    http:
+      container: fastapi-odmantic-realworld-example
+      port: 8000
+      host-port: 8000
+      publish: false
+      protocol: TCP
+      description: The application listens on this port for incoming HTTP requests.
+  connections:
+    mongodb:
+      target: fastapi-odmantic-realworld-example/mongodb
+      service: mongodb
+  variables:
+    secret-key:
+      env: SECRET_KEY
+      type: string
+      description: Secret key used for cryptography and security purposes
+      value: '!!!SETME-USE-SECRETS!!!'
+    algorithm:
+      env: ALGORITHM
+      type: string
+      description: Algorithm used for hashing
+      value: HS256
+    access-token-expire-minutes:
+      env: ACCESS_TOKEN_EXPIRE_MINUTES
+      type: int
+      description: The duration in which the access token expires
+      value: '30'
+    mongo-uri:
+      env: MONGO_URI
+      type: string
+      description: MongoDB connection URI
+      value: <- connection-hostname("mongodb")
+    pythonpath:
+      env: PYTHONPATH
+      type: string
+      description: Path to python modules
+      value: /app/src
+mongodb:
+  defines: runnable
+  inherits: mongodb/mongodb
+stack:
+  defines: group
+  runnable-list:
+    - fastapi-odmantic-realworld-example/fastapi-odmantic-realworld-example
+    - fastapi-odmantic-realworld-example/mongodb
