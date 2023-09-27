@@ -1,0 +1,67 @@
+namespace: fastapi-odmantic-mongodb-example
+fastapi-odmantic-mongodb-example:
+  defines: runnable
+  metadata:
+    name: fastapi-odmantic-mongodb-example
+    description: >-
+      A FastAPI application which uses the ODMantic library for integration with
+      MongoDB.
+    icon: https://emojiapi.dev/api/v1/snake.svg
+  containers:
+    fastapi-odmantic-mongodb-example:
+      build: .
+  services:
+    http:
+      container: fastapi-odmantic-mongodb-example
+      port: 8000
+      host-port: 8000
+      publish: false
+      protocol: TCP
+      description: The port for FastAPI to listen on for HTTP connections
+  connections:
+    mongodb:
+      target: fastapi-odmantic-mongodb-example/mongodb
+      service: mongodb
+  variables:
+    pythonpath:
+      env: PYTHONPATH
+      type: string
+      description: Path for Python interpreter to load modules from.
+      value: ./src
+    coverage-rcfile:
+      env: COVERAGE_RCFILE
+      type: string
+      description: Network coverage config file path.
+      value: ./coverage.ini
+    secret-key:
+      env: SECRET_KEY
+      type: string
+      description: >-
+        Key for encoding/decoding JWT tokens. Considered sensitive and should be
+        stored securely.
+      value: '!!!SETME-USE-SECRETS!!!'
+    algorithm:
+      env: ALGORITHM
+      type: string
+      description: Algorithm for encoding/decoding JWT tokens.
+      value: HS256
+    access-token-expire-minutes:
+      env: ACCESS_TOKEN_EXPIRE_MINUTES
+      type: int
+      description: Expiry time (in minutes) for the access tokens.
+      value: 30
+    mongo-uri:
+      env: MONGO_URI
+      type: string
+      description: >-
+        URI for MongoDB connection. This is expected to be provided depending on
+        the MongoDB deployment.
+      value: <- connection-hostname("mongodb")
+mongodb:
+  defines: runnable
+  inherits: mongodb/mongodb
+stack:
+  defines: group
+  runnable-list:
+    - fastapi-odmantic-mongodb-example/fastapi-odmantic-mongodb-example
+    - fastapi-odmantic-mongodb-example/mongodb
