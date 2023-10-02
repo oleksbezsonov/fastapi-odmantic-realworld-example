@@ -1,0 +1,62 @@
+namespace: fastapi-odmantic-example
+fastapi-odmantic-example:
+  defines: runnable
+  metadata:
+    name: fastapi-odmantic-example
+    description: Example application utilizing FastAPI, ODMantic and MongoDB
+    icon: >-
+      https://github.com/oleksbezsonov/fastapi-odmantic-realworld-example/blob/master/logo.png
+  containers:
+    fastapi-odmantic-example:
+      build: .
+  services:
+    app-port:
+      container: fastapi-odmantic-example
+      port: 8000
+      host-port: 8000
+      publish: false
+      protocol: TCP
+      description: Port where application runs
+  connections:
+    mongo:
+      target: fastapi-odmantic-example/mongodb
+      service: mongodb
+  variables:
+    pythonpath:
+      env: PYTHONPATH
+      type: string
+      description: Root directory for Python modules
+      value: ./src
+    coverage-rcfile:
+      env: COVERAGE_RCFILE
+      type: string
+      description: Directory path for coverage configuration file
+      value: ./coverage.ini
+    secret-key:
+      env: SECRET_KEY
+      type: string
+      description: Key for password encryption
+      value: '!!!SETME-USE-SECRETS!!!'
+    algorithm:
+      env: ALGORITHM
+      type: string
+      description: Algorithm for password encryption
+      value: HS256
+    access-token-expire-minutes:
+      env: ACCESS_TOKEN_EXPIRE_MINUTES
+      type: int
+      description: Expiry time for access token
+      value: 30
+    mongo-uri:
+      env: MONGO_URI
+      type: string
+      description: MongoDB connection URI
+      value: <- connection-hostname("mongo")
+mongodb:
+  defines: runnable
+  inherits: mongodb/mongodb
+stack:
+  defines: group
+  members:
+    - fastapi-odmantic-example/fastapi-odmantic-example
+    - fastapi-odmantic-example/mongodb
