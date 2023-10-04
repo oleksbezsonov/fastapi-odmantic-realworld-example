@@ -1,0 +1,54 @@
+namespace: fastapi-odmantic-example
+fastapi-odmantic-example:
+  defines: runnable
+  metadata:
+    name: fastapi-odmantic-example
+    description: >-
+      This is a FastAPI app using ODMantic for ORM. It exposes user, article,
+      comment, tag, and profile endpoints. The user interacts with these
+      endpoints to perform CRUD operations on articles, profiles and also manage
+      favorites.
+    icon: https://emojiapi.dev/api/v1/robot.svg
+  containers:
+    fastapi-odmantic-example:
+      build: .
+  services:
+    fastapi-odmantic-example-8000-tcp:
+      container: fastapi-odmantic-example
+      port: 8000
+      host-port: 8000
+      publish: false
+      protocol: TCP
+  connections:
+    mongodb:
+      target: fastapi-odmantic-example/mongodb
+      service: mongodb
+  variables:
+    secret-key:
+      env: SECRET_KEY
+      type: string
+      description: Secret key for signing JWT tokens
+      value: '!!!SETME-USE-SECRETS!!!'
+    algorithm:
+      env: ALGORITHM
+      type: string
+      description: Algorithm used for JWT
+      value: HS256
+    access-token-expire-minutes:
+      env: ACCESS_TOKEN_EXPIRE_MINUTES
+      type: int
+      description: The expiration time of the access token in minutes
+      value: 30
+    mongo-uri:
+      env: MONGO_URI
+      type: string
+      description: MongoDB Connection URI
+      value: <- connection-hostname("mongodb")
+mongodb:
+  defines: runnable
+  inherits: mongodb/mongodb
+stack:
+  defines: group
+  members:
+    - fastapi-odmantic-example/fastapi-odmantic-example
+    - fastapi-odmantic-example/mongodb
