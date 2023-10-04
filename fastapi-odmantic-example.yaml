@@ -1,0 +1,53 @@
+namespace: fastapi-odmantic-example
+fastapi-odmantic-example:
+  defines: runnable
+  metadata:
+    name: fastapi-odmantic-example
+    description: >-
+      A FastAPI + ODMantic based application providing CRUD, auth, advanced
+      patterns. It adheres to the RealWorld spec and API.
+    icon: https://emojiapi.dev/api/v1/robot.svg
+  containers:
+    fastapi-odmantic-example:
+      build: .
+  services:
+    application:
+      container: fastapi-odmantic-example
+      port: 8000
+      host-port: 8000
+      publish: false
+      protocol: TCP
+      description: Port on which FastAPI application is run
+  connections:
+    mongodb:
+      target: fastapi-odmantic-example/mongodb
+      service: mongodb
+  variables:
+    secret-key:
+      env: SECRET_KEY
+      type: string
+      description: Used for token creation and verification
+      value: '!!!SETME-USE-SECRETS!!!'
+    algorithm:
+      env: ALGORITHM
+      type: string
+      description: Cryptographic algorithm used in token management
+      value: HS256
+    access-token-expire-minutes:
+      env: ACCESS_TOKEN_EXPIRE_MINUTES
+      type: int
+      description: Expiration time for generated tokens in minutes
+      value: 30
+    mongo-uri:
+      env: MONGO_URI
+      type: string
+      description: Connection string for MongoDB database
+      value: <- connection-hostname("mongodb")
+mongodb:
+  defines: runnable
+  inherits: mongodb/mongodb
+stack:
+  defines: group
+  members:
+    - fastapi-odmantic-example/fastapi-odmantic-example
+    - fastapi-odmantic-example/mongodb
